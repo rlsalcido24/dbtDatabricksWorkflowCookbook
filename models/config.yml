@@ -1,0 +1,17 @@
+version: 2
+
+#models:
+#  - name: usage_costs_silver
+#    columns:
+#      - name: sku_name
+#        description: Description of Databricks capability from a billing perspective, e.g. ENTERPRISE_ALL_PURPOSE_COMPUTE.
+#      - name: usage_start_time
+#        description: Date with time representing the usage included in this record started (UTC).
+
+sources:
+  - name: system_billing
+    database: system
+    schema: billing
+    tables:
+      - name: usage
+      - name: list_prices
