@@ -9,12 +9,18 @@ import os
 run_id = sys.argv[1]
 destination_path = sys.argv[2]
 db_host = sys.argv[3]
+
+print(run_id)
+print(destination_path)
+print(db_host)
+
 db_token = os.getenv("DBT_DATABRICKS_TOKEN")
 
 auth = ('token', db_token)
 headers = {'Host': db_host, 'Content-Type': 'application/json'}
 
 response = requests.get(f"{db_host}/api/2.1/jobs/runs/get-output?run_id={run_id}", auth=auth)
+print(response.text)
 if response.status_code != 200:
     raise ValueError(f"Error retrieving Databricks job run output. Full response: {response.text}")
 
