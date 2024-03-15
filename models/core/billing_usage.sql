@@ -6,7 +6,6 @@
 }}
 With usage_costs as (
 select
---   u.account_id,
   u.workspace_id,
   u.sku_name,
   u.usage_start_time,
@@ -25,11 +24,11 @@ select
   coalesce(u.usage_metadata.job_id, u.usage_metadata.dlt_pipeline_id, u.usage_metadata.warehouse_id, u.usage_metadata.notebook_id) as resource_id,
   u.usage_metadata.*
 from
-  {{ ref('base_raw_billing_usage') }} u 
+  {{ ref('raw_billing_usage') }} u
   inner join system.billing.list_prices lp on u.cloud = lp.cloud and
     u.sku_name = lp.sku_name and
     u.usage_start_time >= lp.price_start_time and
-    (u.usage_end_time <= lp.price_end_time or lp.price_end_time is null) 
+    (u.usage_end_time <= lp.price_end_time or lp.price_end_time is null)
 
 where
      usage_start_time >= '2024-02-01' )
