@@ -1,11 +1,17 @@
 {{
     config(
         materialized = 'incremental',
-        incremental_strategy='merge'
+        incremental_strategy='merge',
+        unique_key='record_id',
+        zorder_by= 'usage_end_time, usage_start_time',
+        post_hook=[
+        "ANALYZE TABLE {{ this }} COMPUTE STATISTICS FOR ALL COLUMNS;"
+        ]
     )
 }}
 With usage_costs as (
 select
+  u.record_id,
   u.workspace_id,
   u.sku_name,
   u.usage_start_time,
@@ -30,7 +36,9 @@ from
     u.usage_start_time >= lp.price_start_time and
     (u.usage_end_time <= lp.price_end_time or lp.price_end_time is null)
 
-where
-     usage_start_time >= '2024-02-01' )
-
+{% if is_incremental() %}
+  where
+     usage_end_time >= (select max(usage_end_time) from {{ this }})
+{% endif %}
+)
      select * from usage_costs
